@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.sitelease.exceptions.UnsupportedMathOperationException;
+import org.springframework.web.bind.annotation.RequestMethod;
+
 
 @RestController
 public class MathController {
@@ -34,5 +36,32 @@ public class MathController {
 		if(strNumber == null) return false;
 		String number = strNumber.replace(",", ".");
 		return number.matches("[-+]?[0-9]*\\.?[0-9]+");
+	}
+	
+	@RequestMapping("/{param}/{numberOne}/{numberTwo}")
+	public Double maths(@PathVariable(value = "param") String param,@PathVariable(value = "numberOne") String numberOne,@PathVariable(value = "numberTwo") String numberTwo ) throws Exception {
+		if(!isNumeric(numberOne) || !isNumeric(numberTwo)) {
+			throw new UnsupportedMathOperationException("Prease set s numeric value!");
+		}
+		switch (param) {
+		case "sub": {
+			return convertToDouble(numberOne) - convertToDouble(numberTwo); 
+		}
+		case "mult":{
+			return convertToDouble(numberOne) * convertToDouble(numberTwo); 
+		}
+		case "div":{
+			return convertToDouble(numberOne) / convertToDouble(numberTwo); 
+		}
+		case "med":{
+			return (convertToDouble(numberOne) + convertToDouble(numberTwo)) / 2;
+		}
+		case "raiz":{
+			Double total = convertToDouble(numberOne) + convertToDouble(numberTwo); 
+			return Math.sqrt(total);
+		}
+		default:
+			throw new IllegalArgumentException("Unexpected value: " + param);
+		}
 	}
 }
